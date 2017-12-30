@@ -1,6 +1,7 @@
 /// 阅读 api.d.ts 查看文档
 ///<reference path="api.d.ts"/>
 
+import { WxgamePlugin } from './wxgame/wxgame';
 
 import { UglifyPlugin, IncrementCompilePlugin, CompilePlugin, ManifestPlugin, ExmlPlugin } from 'built-in';
 
@@ -35,19 +36,18 @@ const config: ResourceManagerConfig = {
             return {
                 outputDir,
                 commands: [
-                    new CustomPlugin(),
                     new CompilePlugin({ libraryType: "release" }),
-                    new ExmlPlugin('default'),
-                    new UglifyPlugin([
-                        {
-                            sources: ['resource/default.thm.js'],
-                            target: "default.thm.min.js"
-                        },
-                        {
-                            sources: ["main.js"],
-                            target: "main.min.js"
-                        }]),
-                    new ManifestPlugin({ output: "manifest.json", hash: "crc32" })
+                    new ExmlPlugin('commonjs'), // 非 EUI 项目关闭此设置
+                    new WxgamePlugin(),
+                    new UglifyPlugin([{
+                          sources: ["main.js"],
+                          target: "main.min.js"
+                      },{
+                          sources: ["resource/default.thm.js"],
+                          target: "resource/default.thm.min.js"
+                      }
+                    ]),
+                    new ManifestPlugin({ output: 'manifest.js' })
                 ]
             }
         }
